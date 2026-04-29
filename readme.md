@@ -1,0 +1,1 @@
+how to sync up and save changes: git pull then commit
