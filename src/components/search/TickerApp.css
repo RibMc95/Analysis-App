@@ -1,0 +1,275 @@
+/* 1) Shell Layout */
+.page-shell {
+	width: min(1100px, 92vw);
+	margin: 0 auto;
+	padding: 2rem 0 3.5rem;
+}
+
+/* 2) Hero */
+.hero-panel {
+	margin-bottom: 1.5rem;
+	padding: 1.5rem;
+	border-radius: 1.2rem;
+	background: linear-gradient(125deg, rgba(8, 50, 106, 0.95), rgba(6, 95, 78, 0.9));
+	color: #f4fbff;
+	box-shadow: var(--shadow);
+}
+
+.hero-panel .eyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-size: 0.78rem;
+	opacity: 0.9;
+	margin-bottom: 0.35rem;
+}
+
+.hero-panel h1 {
+	font-family: 'Archivo Black', sans-serif;
+	font-size: clamp(1.7rem, 3.3vw, 2.4rem);
+	letter-spacing: 0.02em;
+	margin-bottom: 0.5rem;
+}
+
+/* 3) Grid */
+.content-grid {
+	display: grid;
+	grid-template-columns: minmax(260px, 320px) 1fr;
+	gap: 1rem;
+}
+
+/* 4) Shared Panels */
+.search-panel,
+.result-panel {
+	background: var(--panel-bg);
+	border: 1px solid var(--panel-stroke);
+	border-radius: 1.2rem;
+	backdrop-filter: blur(6px);
+	box-shadow: var(--shadow);
+}
+
+/* 5) Search Panel */
+.search-panel {
+	padding: 1rem;
+	align-self: start;
+}
+
+.search-form label {
+	display: block;
+	font-weight: 700;
+	margin-bottom: 0.45rem;
+}
+
+.input-row {
+	display: flex;
+	gap: 0.55rem;
+}
+
+.input-row input {
+	width: 100%;
+	border: 1px solid rgba(13, 50, 110, 0.2);
+	border-radius: 0.75rem;
+	padding: 0.7rem 0.8rem;
+	font-size: 1rem;
+	text-transform: uppercase;
+}
+
+.input-row button,
+.modal button {
+	border: 0;
+	border-radius: 0.75rem;
+	padding: 0.7rem 1rem;
+	color: #fff;
+	background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+	font-weight: 700;
+	cursor: pointer;
+}
+
+/* 6) Ticker Chips */
+.chip-group {
+	margin-top: 1rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.chip-group p {
+	width: 100%;
+	font-size: 0.88rem;
+	font-weight: 700;
+	color: var(--text-muted);
+}
+
+.chip {
+	border: 1px solid rgba(10, 127, 103, 0.35);
+	background: rgba(10, 127, 103, 0.12);
+	color: #045344;
+	border-radius: 100px;
+	padding: 0.32rem 0.75rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.chip.muted {
+	background: rgba(13, 50, 110, 0.09);
+	border-color: rgba(13, 50, 110, 0.25);
+	color: #183d77;
+}
+
+/* 7) Results Panel */
+.result-panel {
+	padding: 1rem;
+	min-height: 420px;
+}
+
+.empty-state {
+	border: 1px dashed rgba(13, 50, 110, 0.3);
+	border-radius: 1rem;
+	padding: 2rem 1rem;
+	text-align: center;
+	color: var(--text-muted);
+}
+
+.empty-state h2 {
+	color: var(--text-main);
+	margin-bottom: 0.4rem;
+}
+
+.stock-header {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	align-items: flex-start;
+	background: linear-gradient(125deg, rgba(11, 40, 85, 0.06), rgba(5, 97, 79, 0.11));
+	border: 1px solid rgba(11, 40, 85, 0.12);
+	border-radius: 1rem;
+	padding: 1rem;
+}
+
+.ticker {
+	font-family: 'Archivo Black', sans-serif;
+	font-size: 1.7rem;
+	line-height: 1;
+}
+
+.stock-header h2 {
+	font-size: 1.2rem;
+	margin: 0.4rem 0;
+}
+
+.stock-header p {
+	color: var(--text-muted);
+}
+
+.change {
+	font-weight: 700;
+}
+
+.price-block {
+	text-align: right;
+}
+
+.price {
+	color: var(--text-main);
+	font-size: clamp(1.4rem, 2.6vw, 2rem);
+	font-weight: 700;
+}
+
+.change.up {
+	color: var(--up);
+}
+
+.change.down {
+	color: var(--down);
+}
+
+.metrics-grid {
+	margin-top: 1rem;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(150px, 1fr));
+	gap: 0.7rem;
+}
+
+.metric-card {
+	background: rgba(255, 255, 255, 0.8);
+	border-radius: 0.9rem;
+	border: 1px solid rgba(13, 50, 110, 0.13);
+	padding: 0.8rem;
+}
+
+.metric-card p {
+	color: var(--text-muted);
+	font-size: 0.88rem;
+	margin-bottom: 0.35rem;
+}
+
+.metric-card h3 {
+	font-size: 1.28rem;
+}
+
+.metric-card.wide {
+	grid-column: 1 / -1;
+}
+
+/* 8) Modal */
+.modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(5, 17, 38, 0.5);
+	display: grid;
+	place-items: center;
+	padding: 1rem;
+}
+
+.modal {
+	width: min(440px, 92vw);
+	border-radius: 1rem;
+	background: #fff;
+	color: var(--text-main);
+	padding: 1.15rem;
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+	margin-bottom: 0.4rem;
+}
+
+.modal p {
+	color: var(--text-muted);
+	margin-bottom: 0.85rem;
+}
+
+/* 9) Responsive */
+@media (max-width: 920px) {
+	.content-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.search-panel {
+		order: 2;
+	}
+
+	.result-panel {
+		order: 1;
+	}
+}
+
+@media (max-width: 600px) {
+
+	.hero-panel,
+	.search-panel,
+	.result-panel {
+		border-radius: 0.9rem;
+	}
+
+	.stock-header {
+		flex-direction: column;
+	}
+
+	.price-block {
+		text-align: left;
+	}
+
+	.metrics-grid {
+		grid-template-columns: 1fr;
+	}
+}

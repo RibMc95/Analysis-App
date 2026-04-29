@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --page-bg: radial-gradient(circle at 8% 5%, #fff6df 0%, #f4f8ff 42%, #e9eff8 100%);
+  --panel-bg: rgba(255, 255, 255, 0.78);
+  --panel-stroke: rgba(11, 40, 85, 0.14);
+  --text-main: #0c1f42;
+  --text-muted: #4f6283;
+  --accent: #0a7f67;
+  --accent-strong: #04614f;
+  --up: #0f8a5f;
+  --down: #b53030;
+  --shadow: 0 20px 50px rgba(12, 28, 70, 0.12);
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  color: var(--text-main);
+  background: var(--page-bg);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}

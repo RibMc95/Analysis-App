@@ -1,1 +1,10 @@
+/*
+  Style Index
+  1) Global reset: src/index.css
+  2) Global theme/base: src/styles/global.css
+  3) Ticker search feature styles: src/components/search/TickerApp.css
+*/
+
+@import './styles/global.css';
+@import './components/search/TickerApp.css';
 

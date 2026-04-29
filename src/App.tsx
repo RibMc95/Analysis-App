@@ -1,5 +1,8 @@
+import { TickerApp } from './components/search/TickerApp'
+import './App.css'
+
 function App() {
-  return <></>
+  return <TickerApp />
 }
 
 export default App
