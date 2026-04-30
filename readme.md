@@ -1,92 +1,56 @@
-# React + TypeScript + Vite
+# Stock Analysis Dashboard
 
-## Local Development (Frontend + API)
+A React + TypeScript + Vite frontend for researching stock metrics powered by **Finnhub API**.
 
-Run both the Vite frontend and Flask API with one command:
+## Quick Start
+
+1. **Get a Finnhub API key** (free): <https://finnhub.io>
+
+2. **Set up environment:**
+
+   ```bash
+   cp .env.example .env
+   # Edit .env and paste your API key
+   ```
+
+3. **Install & run:**
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+   Frontend opens at: <http://localhost:5173>
+
+## Features
+
+- Real-time stock quotes (price, day change)
+- Company info (name, industry)
+- Financial metrics:
+  - P/E ratio
+  - 52-week high/low
+  - Market cap
+  - Net income (last 2 years)
+  - Growth rate & Growth/P/E ratio
+
+## Build
 
 ```bash
-npm install
-npm run dev
+npm run build
 ```
 
-Expected endpoints while running:
+Production-ready React app is output to `dist/`.
 
-- Frontend: <http://localhost:5173>
-- API health: <http://127.0.0.1:5000/health>
+To deploy with Docker:
 
-Notes:
-
-- The API script uses `src/API/venv/bin/python3` when present.
-- If no local venv exists, it falls back to `python3`.
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+docker build --build-arg VITE_FINNHUB_API_KEY=your_key . -t stock-app
+docker run -p 80:80 stock-app
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Project Structure
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `src/components/search/` — Ticker search UI (React)
+- `src/API/finnhubService.ts` — Finnhub API client (TypeScript)
+- `vite.config.ts` — Vite dev server config
+- `Dockerfile` — Multi-stage nginx build
