@@ -1,5 +1,24 @@
 # React + TypeScript + Vite
 
+## Local Development (Frontend + API)
+
+Run both the Vite frontend and Flask API with one command:
+
+```bash
+npm install
+npm run dev
+```
+
+Expected endpoints while running:
+
+- Frontend: <http://localhost:5173>
+- API health: <http://127.0.0.1:5000/health>
+
+Notes:
+
+- The API script uses `src/API/venv/bin/python3` when present.
+- If no local venv exists, it falls back to `python3`.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

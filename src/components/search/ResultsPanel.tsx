@@ -1,11 +1,12 @@
 import type { SearchResult } from './types'
-import { formatPercent, formatPrice, formatRatio } from './utils'
+import { formatMarketCap, formatNetIncome, formatPercent, formatPrice, formatRatio } from './utils'
 
 type ResultsPanelProps = {
     result: SearchResult | null
+    isLoading: boolean
 }
 
-export function ResultsPanel({ result }: ResultsPanelProps) {
+export function ResultsPanel({ result, isLoading }: ResultsPanelProps) {
     return (
         <section className="result-panel">
             {!result && (
@@ -21,7 +22,7 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
                         <div>
                             <p className="ticker">{result.ticker}</p>
                             <h2>{result.company ?? 'Company details coming from API'}</h2>
-                            <p>{result.industry ?? 'Industry will load after API integration'}</p>
+                            <p>{result.industry ?? (isLoading ? 'Loading industry...' : 'Industry unavailable')}</p>
                         </div>
                         <div className="price-block">
                             <p className="price">{formatPrice(result.price)}</p>
@@ -52,9 +53,17 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
                             <p>Growth / P:E</p>
                             <h3>{formatRatio(result.metrics.growthOverPe)}</h3>
                         </article>
+                        <article className="metric-card wide">
+                            <p>Net Income (Last 2 Years)</p>
+                            <h3>
+                                {result.metrics.netIncomeLastTwoYears.length === 2
+                                    ? `${result.metrics.netIncomeLastTwoYears[0].year ?? 'Latest'}: ${formatNetIncome(result.metrics.netIncomeLastTwoYears[0].value)} | ${result.metrics.netIncomeLastTwoYears[1].year ?? 'Prior'}: ${formatNetIncome(result.metrics.netIncomeLastTwoYears[1].value)}`
+                                    : 'N/A'}
+                            </h3>
+                        </article>
                         <article className="metric-card">
                             <p>Market Cap</p>
-                            <h3>{result.metrics.marketCap ?? 'N/A'}</h3>
+                            <h3>{result.metrics.marketCap ?? formatMarketCap(null)}</h3>
                         </article>
                         <article className="metric-card wide">
                             <p>52-Week Range</p>

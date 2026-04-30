@@ -1,10 +1,11 @@
 type InvalidTickerModalProps = {
     isOpen: boolean
+    title?: string
     message: string
     onClose: () => void
 }
 
-export function InvalidTickerModal({ isOpen, message, onClose }: InvalidTickerModalProps) {
+export function InvalidTickerModal({ isOpen, title = 'Invalid ticker', message, onClose }: InvalidTickerModalProps) {
     if (!isOpen) {
         return null
     }
@@ -18,7 +19,7 @@ export function InvalidTickerModal({ isOpen, message, onClose }: InvalidTickerMo
                 aria-labelledby="invalid-ticker-title"
                 onClick={(event) => event.stopPropagation()}
             >
-                <h2 id="invalid-ticker-title">Invalid ticker</h2>
+                <h2 id="invalid-ticker-title">{title}</h2>
                 <p>{message}</p>
                 <button type="button" onClick={onClose}>
                     Try again
