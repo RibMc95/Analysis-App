@@ -1,5 +1,7 @@
+
 import type { SearchResult } from './types'
 import { formatNetIncome, formatPercent, formatPrice, formatRatio } from './utils'
+
 
 type ResultsPanelProps = {
     result: SearchResult | null

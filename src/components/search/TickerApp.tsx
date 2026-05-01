@@ -9,6 +9,7 @@ import type { SearchResult } from './types'
 import { createPendingResult, formatMarketCap, isTickerFormatValid, normalizeTicker } from './utils'
 import { fetchStockData } from '../../API/finnhubService'
 import type { FinnhubStockData } from '../../API/finnhubService'
+import { addFavoriteStock, deleteFavoriteStock, getFavoriteStocks } from '../../services/favoritesService'
 
 function buildFiftyTwoWeekRange(high: number | null | undefined, low: number | null | undefined): string | null {
   if (typeof low === 'number' && typeof high === 'number') {
@@ -114,24 +115,65 @@ export function TickerApp() {
     await applyTicker(normalizedTicker)
   }
 
-  function toggleFavorite(): void {
+  async function toggleFavorite(): Promise<void> {
     if (!result) {
       return
     }
 
-    setFavorites((current) => {
-      if (current.includes(result.ticker)) {
-        return current.filter((item) => item !== result.ticker)
+    if (!user?.email) {
+      openInvalidModal('Please log in before adding favorites.', 'Login required')
+      return
+    }
+
+    const userId = user.email.toLowerCase()
+    const ticker = result.ticker
+
+    try {
+      if (favorites.includes(ticker)) {
+        await deleteFavoriteStock(userId, ticker)
+        setFavorites((current) => current.filter((item) => item !== ticker))
+        return
       }
 
-      return [result.ticker, ...current]
-    })
+      await addFavoriteStock({
+        userId,
+        ticker,
+        companyName: result.company || 'Unknown Company',
+        industry: result.industry || 'Unknown',
+        growthRate: result.metrics.netIncomeGrowth || 0,
+        peRatio: result.metrics.peRatio || 0,
+        growthOverPe: result.metrics.growthOverPe || 0,
+      })
+
+      setFavorites((current) => [ticker, ...current.filter((item) => item !== ticker)])
+    } catch (error) {
+      console.error('Error updating favorite:', error)
+      openInvalidModal('Could not update favorites. Make sure the backend and database are running.', 'Favorites error')
+    }
   }
 
   function handleLogout(): void {
     logout()
     navigate('/login')
   }
+
+  useEffect(() => {
+    async function loadFavoritesFromDatabase() {
+      if (!user?.email) {
+        return
+      }
+
+      try {
+        const savedFavorites = await getFavoriteStocks(user.email.toLowerCase())
+        const savedTickers = savedFavorites.map((stock: { ticker: string }) => stock.ticker)
+        setFavorites(savedTickers)
+      } catch (error) {
+        console.error('Error loading favorites:', error)
+      }
+    }
+
+    loadFavoritesFromDatabase()
+  }, [user?.email])
 
   useEffect(() => {
     window.localStorage.setItem('favorites', JSON.stringify(favorites))

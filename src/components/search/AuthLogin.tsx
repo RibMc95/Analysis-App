@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 type AuthUser = {
   email: string;
+  userId: string;
 } | null;
 
 type AuthContextType = {
@@ -14,14 +15,24 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser>(null);
+  const [user, setUser] = useState<AuthUser>(() => {
+    const savedUser = localStorage.getItem("stockAppUser");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const login = (email: string, _password: string) => {
-    setUser({ email });
+    const loggedInUser = {
+      email,
+      userId: email.toLowerCase(),
+    };
+
+    setUser(loggedInUser);
+    localStorage.setItem("stockAppUser", JSON.stringify(loggedInUser));
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("stockAppUser");
   };
 
   return (
@@ -33,8 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used within AuthProvider");
   }
+
   return context;
 }
