@@ -129,7 +129,14 @@ function writeStockSymbolCache(symbols: StockSymbol[]): void {
     }
 }
 
-const NET_INCOME_CONCEPTS = ['NetIncomeLoss', 'NetIncome', 'ProfitLoss']
+const NET_INCOME_CONCEPTS = [
+    'NetIncomeLoss',
+    'NetIncome',
+    'ProfitLoss',
+    'us-gaap_NetIncomeLoss',
+    'us-gaap_NetIncome',
+    'us-gaap_ProfitLoss',
+]
 
 function extractNetIncome(data: ReportedFinancials): Array<{ year: number | null; value: number }> {
     const annuals = (data.data ?? [])

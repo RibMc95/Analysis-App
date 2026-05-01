@@ -1,7 +1,75 @@
 /* 1) Shell Layout */
 .page-shell {
 	margin: 0 auto;
-	
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.page-shell > main {
+	flex: 1;
+}
+
+/* Footer */
+.app-footer {
+	background-color: #0b2446;
+	background-image: url('../../assets/ChatGPT Image May 1, 2026 at 12_10_02 AM.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #a8c8e8;
+	padding: 1.5rem 1.5rem;
+	margin-top: 2rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-footer__inner {
+	max-width: 900px;
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.app-footer :is(.app-footer__brand, .app-footer__copy, a) {
+	text-shadow:
+		0 0 4px rgba(0, 0, 0, 0.6),
+		0 0 10px rgba(0, 0, 0, 0.45),
+		0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.app-footer__brand {
+	font-weight: 700;
+	font-size: 0.95rem;
+	color: #ffffff;
+	letter-spacing: 0.04em;
+}
+
+.app-footer__links {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+	font-size: 0.875rem;
+}
+
+.app-footer__links a {
+	color: #e0f0ff;
+	text-decoration: none;
+	transition: color 0.15s;
+}
+
+.app-footer__links a:hover {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+.app-footer__copy {
+	margin: 0;
+	font-size: 0.8rem;
+	color: #c8dff0;
+	opacity: 0.9;
 }
 
 /* 2) Hero */
@@ -88,6 +156,7 @@
 	display: grid;
 	grid-template-columns: minmax(260px, 320px) 1fr;
 	gap: 1rem;
+	align-items: stretch;
 }
 
 /* 4) Shared Panels */
@@ -103,7 +172,6 @@
 /* 5) Search Panel */
 .search-panel {
 	padding: 1rem;
-	align-self: start;
 }
 
 .search-form label {

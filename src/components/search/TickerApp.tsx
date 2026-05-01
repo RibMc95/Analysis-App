@@ -233,6 +233,18 @@ export function TickerApp() {
         message={invalidMessage}
         onClose={() => setShowInvalidModal(false)}
       />
+
+      <footer className="app-footer">
+        <div className="app-footer__inner">
+          <span className="app-footer__brand">Stock Intelligence</span>
+          <nav className="app-footer__links" aria-label="Footer navigation">
+            <a href="https://finnhub.io" target="_blank" rel="noopener noreferrer">Data by Finnhub</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://github.com/RibMc95/Analysis-App" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </nav>
+          <p className="app-footer__copy">&copy; {new Date().getFullYear()} Analysis App. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   )
 }
