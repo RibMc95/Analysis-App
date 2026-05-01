@@ -61,7 +61,7 @@ export type FinnhubStockData = {
     peRatio: number | null
     netIncomeLastTwoYears: Array<{ year: number | null; value: number }>
     netIncomeGrowthRate: number | null
-    growthOverPe: number | null
+    peOverGrowth: number | null
 }
 
 export type StockSymbol = {
@@ -180,9 +180,9 @@ export async function fetchStockData(ticker: string): Promise<FinnhubStockData> 
         }
     }
 
-    const growthOverPe =
-        netIncomeGrowthRate !== null && peRatio !== null && peRatio !== 0
-            ? netIncomeGrowthRate / peRatio
+    const peOverGrowth =
+        netIncomeGrowthRate !== null && peRatio !== null && netIncomeGrowthRate !== 0
+            ? peRatio / netIncomeGrowthRate
             : null
 
     const marketCap =
@@ -202,7 +202,7 @@ export async function fetchStockData(ticker: string): Promise<FinnhubStockData> 
         peRatio,
         netIncomeLastTwoYears,
         netIncomeGrowthRate,
-        growthOverPe,
+        peOverGrowth,
     }
 }
 

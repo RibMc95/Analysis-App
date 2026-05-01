@@ -28,7 +28,7 @@ function mapDataToSearchResult(ticker: string, data: FinnhubStockData): SearchRe
     metrics: {
       peRatio: data.peRatio ?? null,
       netIncomeGrowth: data.netIncomeGrowthRate ?? null,
-      growthOverPe: data.growthOverPe ?? null,
+      peOverGrowth: data.peOverGrowth ?? null,
       netIncomeLastTwoYears: data.netIncomeLastTwoYears ?? [],
       marketCap: formatMarketCap(data.marketCap ?? null),
       fiftyTwoWeekRange: buildFiftyTwoWeekRange(data.fiftyTwoWeekHigh, data.fiftyTwoWeekLow),
@@ -142,7 +142,7 @@ export function TickerApp() {
         industry: result.industry || 'Unknown',
         growthRate: result.metrics.netIncomeGrowth || 0,
         peRatio: result.metrics.peRatio || 0,
-        growthOverPe: result.metrics.growthOverPe || 0,
+        peOverGrowth: result.metrics.peOverGrowth || 0,
       })
 
       setFavorites((current) => [ticker, ...current.filter((item) => item !== ticker)])

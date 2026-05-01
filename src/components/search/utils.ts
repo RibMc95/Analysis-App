@@ -80,7 +80,7 @@ export function createPendingResult(ticker: string): SearchResult {
         metrics: {
             peRatio: null,
             netIncomeGrowth: null,
-            growthOverPe: null,
+            peOverGrowth: null,
             netIncomeLastTwoYears: [],
             marketCap: null,
             fiftyTwoWeekRange: null,

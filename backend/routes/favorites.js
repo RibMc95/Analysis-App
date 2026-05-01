@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
       industry,
       growthRate,
       peRatio,
-      growthOverPe,
+      peOverGrowth,
     } = req.body || {};
 
     if (!userId || !ticker) {
@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
       industry: industry || "Unknown",
       growthRate: Number(growthRate) || 0,
       peRatio: Number(peRatio) || 0,
-      growthOverPe: Number(growthOverPe) || 0,
+      peOverGrowth: Number(peOverGrowth) || 0,
       dateAdded: new Date().toISOString(),
     };
 

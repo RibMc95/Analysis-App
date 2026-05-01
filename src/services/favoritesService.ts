@@ -5,7 +5,7 @@ export type FavoriteStock = {
   industry: string;
   growthRate: number;
   peRatio: number;
-  growthOverPe: number;
+  peOverGrowth: number;
 };
 
 const API_BASE_URL = "/api";

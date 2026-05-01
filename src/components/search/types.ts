@@ -6,7 +6,7 @@ export type NetIncomePoint = {
 export type StockMetrics = {
     peRatio: number | null
     netIncomeGrowth: number | null
-    growthOverPe: number | null
+    peOverGrowth: number | null
     netIncomeLastTwoYears: NetIncomePoint[]
     marketCap: string | null
     fiftyTwoWeekRange: string | null

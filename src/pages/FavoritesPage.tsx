@@ -13,7 +13,7 @@ export default function FavoritesPage() {
 
   async function viewTicker(ticker: string): Promise<void> {
     setIsFocusedLoading(true);
-    setFocusedResult({ ticker, company: null, industry: null, price: null, dayChangePercent: null, metrics: { peRatio: null, netIncomeGrowth: null, growthOverPe: null, netIncomeLastTwoYears: [], marketCap: null, fiftyTwoWeekRange: null } });
+    setFocusedResult({ ticker, company: null, industry: null, price: null, dayChangePercent: null, metrics: { peRatio: null, netIncomeGrowth: null, peOverGrowth: null, netIncomeLastTwoYears: [], marketCap: null, fiftyTwoWeekRange: null } });
     try {
       const data = await fetchStockData(ticker);
       setFocusedResult({
@@ -25,7 +25,7 @@ export default function FavoritesPage() {
         metrics: {
           peRatio: data.peRatio ?? null,
           netIncomeGrowth: data.netIncomeGrowthRate ?? null,
-          growthOverPe: data.growthOverPe ?? null,
+          peOverGrowth: data.peOverGrowth ?? null,
           netIncomeLastTwoYears: data.netIncomeLastTwoYears ?? [],
           marketCap: formatMarketCap(data.marketCap ?? null),
           fiftyTwoWeekRange: data.fiftyTwoWeekHigh != null && data.fiftyTwoWeekLow != null

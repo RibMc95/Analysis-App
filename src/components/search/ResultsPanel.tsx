@@ -89,10 +89,10 @@ export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite, 
                                 <h3>{formatPercent(result.metrics.netIncomeGrowth)}</h3>
                             </article>
                         )}
-                        {result.metrics.growthOverPe !== null && (
+                        {result.metrics.peOverGrowth !== null && (
                             <article className="metric-card">
-                                <p>Growth / P:E</p>
-                                <h3>{formatRatio(result.metrics.growthOverPe)}</h3>
+                                <p>P/E / Growth</p>
+                                <h3>{formatRatio(result.metrics.peOverGrowth)}</h3>
                             </article>
                         )}
                         {result.metrics.netIncomeLastTwoYears.length === 2 && (
