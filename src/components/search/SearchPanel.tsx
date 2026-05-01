@@ -12,8 +12,6 @@ type SearchPanelProps = {
     onQuickTicker: (ticker: string) => void
 }
 
-const POPULAR_TICKERS = ['AAPL', 'MSFT', 'NVDA', 'AMZN', 'TSLA']
-
 export function SearchPanel({
     tickerInput,
     recentTickers,
@@ -54,6 +52,17 @@ export function SearchPanel({
         }
     }, [])
 
+    const normalizedInput = tickerInput.trim().toUpperCase()
+    const matchedStocks =
+        normalizedInput.length === 0
+            ? allStocks.slice(0, 8)
+            : allStocks
+                .filter((stock) =>
+                    stock.ticker.startsWith(normalizedInput) ||
+                    stock.company.toUpperCase().includes(normalizedInput),
+                )
+                .slice(0, 8)
+
     return (
         <section className="search-panel">
             <form className="search-form" onSubmit={onSearch}>
@@ -73,12 +82,21 @@ export function SearchPanel({
             </form>
 
             <div className="chip-group">
-                <p>Popular</p>
-                {POPULAR_TICKERS.map((ticker) => (
-                    <button key={ticker} type="button" className="chip" disabled={isLoading} onClick={() => onQuickTicker(ticker)}>
-                        {ticker}
+                <p>{normalizedInput.length === 0 ? 'Suggested' : 'Matches'}</p>
+                {matchedStocks.map((stock) => (
+                    <button
+                        key={stock.ticker}
+                        type="button"
+                        className="chip"
+                        disabled={isLoading}
+                        onClick={() => onQuickTicker(stock.ticker)}
+                    >
+                        {stock.ticker}
                     </button>
                 ))}
+                {!isLoadingSymbols && matchedStocks.length === 0 && (
+                    <span>No symbols found</span>
+                )}
             </div>
 
             {recentTickers.length > 0 && (
@@ -98,7 +116,7 @@ export function SearchPanel({
                     <span>{isLoadingSymbols ? 'Loading...' : `${allStocks.length} symbols`}</span>
                 </div>
 
-                <div className="stock-list-scroll" role="listbox" aria-label="All API stocks">
+                <div className="stock-list-scroll" aria-label="All API stocks">
                     {allStocks.map((stock) => (
                         <button
                             key={stock.ticker}
