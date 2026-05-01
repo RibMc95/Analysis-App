@@ -22,9 +22,14 @@ function LoginPage() {
       await login(email, password);
       setError("");
       navigate("/search");
-    } catch (error) {
-      console.error("Login failed:", error);
-      setError("Login failed. Make sure the backend and database are running.");
+    } catch (err) {
+      console.error("Login failed:", err);
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
   };
 

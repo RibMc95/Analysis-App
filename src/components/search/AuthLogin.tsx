@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<void> => {
     const loggedInUser = await loginUser(email, password);
 
     setUser(loggedInUser);

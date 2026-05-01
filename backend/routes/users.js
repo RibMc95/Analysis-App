@@ -5,16 +5,19 @@ import { docClient } from "../db.js";
 const router = express.Router();
 const TABLE_NAME = "Users";
 
-// Simple login route
-// If the user exists, it logs them in.
-// If the user does not exist, it creates them.
 router.post("/login", async (req, res) => {
   try {
-   const { email, password } = req.body || {};
+    const { email, password } = req.body || {};
 
     if (!email || email.trim() === "") {
       return res.status(400).json({
         error: "Email is required",
+      });
+    }
+
+    if (!password || password.trim() === "") {
+      return res.status(400).json({
+        error: "Password is required",
       });
     }
 
@@ -33,7 +36,7 @@ router.post("/login", async (req, res) => {
       const newUser = {
         userId: cleanEmail,
         email: cleanEmail,
-        password: password || "",
+        password: password,
         createdAt: new Date().toISOString(),
       };
 
@@ -54,6 +57,12 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    if (existingUser.Item.password !== password) {
+      return res.status(401).json({
+        error: "Incorrect password",
+      });
+    }
+
     return res.json({
       message: "User logged in",
       user: {
@@ -64,7 +73,7 @@ router.post("/login", async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       error: "Could not log in user",
     });
   }

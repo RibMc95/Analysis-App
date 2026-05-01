@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
       growthRate,
       peRatio,
       growthOverPe,
-    } = req.body;
+    } = req.body || {};
 
     if (!userId || !ticker) {
       return res.status(400).json({
@@ -28,9 +28,9 @@ router.post("/", async (req, res) => {
     }
 
     const favorite = {
-      userId,
+      userId: userId.toLowerCase(),
       ticker: ticker.toUpperCase(),
-      companyName: companyName || "",
+      companyName: companyName || "Unknown Company",
       industry: industry || "Unknown",
       growthRate: Number(growthRate) || 0,
       peRatio: Number(peRatio) || 0,
@@ -66,7 +66,7 @@ router.get("/:userId", async (req, res) => {
         TableName: TABLE_NAME,
         KeyConditionExpression: "userId = :userId",
         ExpressionAttributeValues: {
-          ":userId": userId,
+          ":userId": userId.toLowerCase(),
         },
       })
     );
@@ -90,7 +90,7 @@ router.get("/:userId/industry/:industry", async (req, res) => {
         IndexName: "IndustryIndex",
         KeyConditionExpression: "userId = :userId AND industry = :industry",
         ExpressionAttributeValues: {
-          ":userId": userId,
+          ":userId": userId.toLowerCase(),
           ":industry": industry,
         },
       })
@@ -113,7 +113,7 @@ router.delete("/:userId/:ticker", async (req, res) => {
       new DeleteCommand({
         TableName: TABLE_NAME,
         Key: {
-          userId,
+          userId: userId.toLowerCase(),
           ticker: ticker.toUpperCase(),
         },
       })
