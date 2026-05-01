@@ -1,171 +1,271 @@
 # Stock Analysis Dashboard
 
-A modern React + TypeScript web app for researching stock metrics powered by the **Finnhub API**.
+A modern React and TypeScript web app for researching stock metrics using the Finnhub API. This project also includes a backend and DynamoDB database so users can save and manage their favorite stocks.
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Get an API Key
+### 1. Get a Finnhub API Key
 
-Sign up for free at [finnhub.io](https://finnhub.io) and generate your API token.
+Sign up for a free Finnhub API key and add it to your environment file.
 
-### 2. Configure Environment
+### 2. Configure Environment Variables
 
-```bash
-cp .env.example .env
-# Edit .env and add your Finnhub API key:
-# VITE_FINNHUB_API_KEY=your_token_here
-```
+Create a `.env` file for the frontend:
 
-### 3. Install & Run
+VITE_FINNHUB_API_KEY=your_finnhub_token_here
 
-```bash
-npm install
-npm run dev
-```
+Create a `.env` file for the backend:
 
-Open <http://localhost:5173> in your browser.
+PORT=5000
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your_access_key_here
+AWS_SECRET_ACCESS_KEY=your_secret_key_here
+DYNAMODB_ENDPOINT=http://dynamodb-local:8000
 
-## 📊 Features
+Do not upload real API keys or AWS secrets to GitHub.
 
-Search any stock ticker to see:
+## Run the Full App
 
-- **Real-time Price Data**: Current price, day change percentage
-- **Company Info**: Name, industry classification
-- **Financial Metrics**:
-  - P/E Ratio
-  - 52-week high & low
-  - Market capitalization
-  - Net income (last 2 years with growth rate)
-  - Growth/P/E ratio
+This project uses Docker Compose so the frontend, backend, DynamoDB database, and DynamoDB Admin can run together.
 
-## 📁 Project Structure
+Command to run the full project:
 
-```
+docker compose up --build
+
+After it starts, open these links in your browser:
+
+Frontend: http://localhost:5173  
+Backend: http://localhost:5000  
+DynamoDB Admin: http://localhost:8001  
+
+## Features
+
+Users can search any stock ticker and view:
+
+- Real-time stock price
+- Daily price change percentage
+- Company name and industry
+- P/E ratio
+- 52-week high and low
+- Market capitalization
+- Net income from the last 2 years
+- Net income growth rate
+- Growth/P/E ratio
+
+Users can also:
+
+- Log in or create a user
+- Save favorite stocks
+- View saved favorite stocks
+- Delete stocks from favorites
+- Store user and favorites data in DynamoDB
+
+## Database
+
+This project uses DynamoDB Local for the database during development.
+
+The database stores user information and favorite stock information. This makes the app more useful because users can save stocks instead of only searching them one time.
+
+### Users Table
+
+The users table stores user information. When someone logs in, the backend checks if the user already exists. If the user does not exist, the backend can create a new user.
+
+### Favorites Table
+
+The favorites table stores the stocks that a user saves. Each favorite is connected to a user so the app knows which saved stocks belong to each person.
+
+Favorite stock data may include:
+
+- Username or user ID
+- Stock ticker
+- Company name
+- Current price
+- Date saved
+
+## Backend API
+
+The backend runs on:
+
+http://localhost:5000
+
+Main route:
+
+GET /
+
+This returns:
+
+{
+  "message": "Stock app backend is running"
+}
+
+User routes:
+
+/api/users
+
+Favorites routes:
+
+/api/favorites
+
+These routes allow the frontend to communicate with the database.
+
+## Project Structure
+
 src/
-├── components/search/        # UI components
-│   ├── TickerApp.tsx        # Main search container
-│   ├── SearchPanel.tsx      # Input form
-│   ├── ResultsPanel.tsx     # Results display
-│   ├── InvalidTickerModal.tsx # Error modal
-│   ├── types.ts             # TypeScript types
-│   └── utils.ts             # Helper functions
+├── components/search/
+│   ├── TickerApp.tsx
+│   ├── SearchPanel.tsx
+│   ├── ResultsPanel.tsx
+│   ├── InvalidTickerModal.tsx
+│   ├── types.ts
+│   └── utils.ts
 ├── API/
-│   └── finnhubService.ts    # Finnhub API client
-└── styles/                   # CSS files
-```
+│   └── finnhubService.ts
+└── styles/
 
-## 🏗️ Building
+backend/
+├── server.js
+├── routes/
+│   ├── users.js
+│   └── favorites.js
+├── db/
+│   └── dynamodb.js
+└── .env
 
-### Development Build
+## Tech Stack
 
-```bash
+Frontend:
+
+- React
+- TypeScript
+- Vite
+- Finnhub API
+
+Backend:
+
+- Node.js
+- Express
+- CORS
+- dotenv
+- AWS SDK v3
+
+Database:
+
+- DynamoDB Local
+- DynamoDB Admin
+
+Tools:
+
+- Docker
+- Docker Compose
+
+## Available Scripts
+
+Frontend:
+
+npm run dev
 npm run build
-```
+npm run preview
+npm run lint
 
-### Production Docker Image
+Backend:
 
-```bash
-docker build --build-arg VITE_FINNHUB_API_KEY=your_key . -t stock-app
-docker run -p 80:80 stock-app
-```
+node server.js
 
-The built app is served via nginx at `http://localhost`.
+Docker:
 
-## 🛠️ Tech Stack
+docker compose up --build
+docker compose down
+docker compose restart
 
-- **Frontend**: React 19 + TypeScript
-- **Build Tool**: Vite 8
-- **API**: Finnhub Stock Data API
-- **Production**: nginx (Docker)
-- **Dev Dependencies**: ESLint, TypeScript
+## How to Check That Everything Works
 
-## 📝 Available Scripts
+After running:
 
-- `npm run dev` — Start Vite dev server
-- `npm run build` — Build for production
-- `npm run preview` — Preview production build locally
-- `npm run lint` — Run ESLint
+docker compose up --build
 
-## 🔑 Environment Variables
+Open the frontend:
 
-Create a `.env` file in the project root:
+http://localhost:5173
 
-```
-VITE_FINNHUB_API_KEY=your_finnhub_token
-```
+Open the backend:
 
-See `.env.example` for reference.
+http://localhost:5000
 
-## 📦 Dependencies
+You should see:
 
-### Production
+{
+  "message": "Stock app backend is running"
+}
 
-- `react@^19.2.5`
-- `react-dom@^19.2.5`
+Open DynamoDB Admin:
 
-### Development
+http://localhost:8001
 
-- `vite@^8` — Build tool & dev server
-- `typescript@~6.0.2` — Type checking
-- `eslint@^10` — Code linting
-- `@vitejs/plugin-react@^6` — Vite React integration
+This page lets users view the DynamoDB tables and stored data.
 
-## ✨ Key Features
+## Troubleshooting
 
-### Smart Error Handling
+### Backend connection error
 
-- Detects rate limits and shows user-friendly messages
-- Validates ticker format before API calls
-- Graceful fallback for missing/invalid data
+Make sure Docker Compose is running:
 
-### Financial Calculations
+docker compose up --build
 
-- **Growth Rate**: Year-over-year net income change
-- **Growth/P/E**: Growth rate divided by P/E ratio (value metric)
+Also make sure the frontend is using the correct backend URL:
 
-### Recent Tickers
+http://localhost:5000
 
-- Automatically saves last 5 searched tickers for quick re-access
+### Port 8000 is already in use
 
-### Real-time Data
+This means DynamoDB may already be running in another container.
 
-- Direct Finnhub API calls (no backend proxy needed)
-- 60-second cache via Finnhub's native rate limiting
+Run:
 
-## 🚀 Deployment
+docker compose down
 
-### Docker
+Then restart:
 
-```bash
-# Build with your API key
-docker build \
-  --build-arg VITE_FINNHUB_API_KEY=your_key \
-  -t stock-analysis-app .
+docker compose up --build
 
-# Run on port 80
-docker run -p 80:80 stock-analysis-app
-```
+### API key is not working
 
-### Static Hosting (Netlify, Vercel, etc.)
+Make sure the frontend `.env` file has:
 
-```bash
+VITE_FINNHUB_API_KEY=your_finnhub_token_here
+
+Then restart the app.
+
+## Deployment
+
+For frontend-only deployment:
+
 npm run build
-# Deploy the 'dist' folder
-```
 
-## 📖 Finnhub API
+Then deploy the `dist` folder to a service like Netlify or Vercel.
 
-This app uses four Finnhub endpoints:
+For full database features, the backend and database also need to be hosted.
 
-- `/stock/profile2` — Company info
-- `/quote` — Price data
-- `/stock/metric` — Financial metrics (P/E, 52-week range)
-- `/stock/financials-reported` — Historical net income
+## Finnhub API
 
-## 🤝 Contributing
+This app uses Finnhub API endpoints for:
 
-Feel free to fork, modify, and improve!
+- Company profile information
+- Real-time quote data
+- Financial metrics
+- Historical financial reports
 
-## 📄 License
+## Team Access
+
+Teammates can get the latest code with:
+
+git pull origin main
+
+Then run the full project with:
+
+docker compose up --build
+
+Each teammate should create their own `.env` files before running the project.
+
+## License
 
 MIT
