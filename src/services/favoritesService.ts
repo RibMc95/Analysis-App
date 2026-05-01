@@ -8,7 +8,7 @@ export type FavoriteStock = {
   growthOverPe: number;
 };
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "/api";
 
 export async function addFavoriteStock(stock: FavoriteStock) {
   const response = await fetch(`${API_BASE_URL}/favorites`, {
