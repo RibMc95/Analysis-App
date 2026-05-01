@@ -1,11 +1,14 @@
 import type { SearchResult } from './types'
-import { formatPercent, formatPrice, formatRatio } from './utils'
+import { formatNetIncome, formatPercent, formatPrice, formatRatio } from './utils'
 
 type ResultsPanelProps = {
     result: SearchResult | null
+    isLoading: boolean
+    isFavorite: boolean
+    onToggleFavorite: () => void
 }
 
-export function ResultsPanel({ result }: ResultsPanelProps) {
+export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite }: ResultsPanelProps) {
     return (
         <section className="result-panel">
             {!result && (
@@ -21,9 +24,17 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
                         <div>
                             <p className="ticker">{result.ticker}</p>
                             <h2>{result.company ?? 'Company details coming from API'}</h2>
-                            <p>{result.industry ?? 'Industry will load after API integration'}</p>
+                            <p>{result.industry ?? (isLoading ? 'Loading industry...' : 'Industry unavailable')}</p>
                         </div>
                         <div className="price-block">
+                            <button
+                                type="button"
+                                className={isFavorite ? 'favorite-button active' : 'favorite-button'}
+                                onClick={onToggleFavorite}
+                                aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                            >
+                                {isFavorite ? '★ Favorited' : '☆ Add to favorites'}
+                            </button>
                             <p className="price">{formatPrice(result.price)}</p>
                             <p
                                 className={
@@ -40,26 +51,44 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
                     </article>
 
                     <div className="metrics-grid">
-                        <article className="metric-card">
-                            <p>P/E Ratio</p>
-                            <h3>{formatRatio(result.metrics.peRatio)}</h3>
-                        </article>
-                        <article className="metric-card">
-                            <p>Net Income Growth</p>
-                            <h3>{formatPercent(result.metrics.netIncomeGrowth)}</h3>
-                        </article>
-                        <article className="metric-card">
-                            <p>Growth / P:E</p>
-                            <h3>{formatRatio(result.metrics.growthOverPe)}</h3>
-                        </article>
-                        <article className="metric-card">
-                            <p>Market Cap</p>
-                            <h3>{result.metrics.marketCap ?? 'N/A'}</h3>
-                        </article>
-                        <article className="metric-card wide">
-                            <p>52-Week Range</p>
-                            <h3>{result.metrics.fiftyTwoWeekRange ?? 'N/A'}</h3>
-                        </article>
+                        {result.metrics.peRatio !== null && (
+                            <article className="metric-card">
+                                <p>P/E Ratio</p>
+                                <h3>{formatRatio(result.metrics.peRatio)}</h3>
+                            </article>
+                        )}
+                        {result.metrics.netIncomeGrowth !== null && (
+                            <article className="metric-card">
+                                <p>Net Income Growth</p>
+                                <h3>{formatPercent(result.metrics.netIncomeGrowth)}</h3>
+                            </article>
+                        )}
+                        {result.metrics.growthOverPe !== null && (
+                            <article className="metric-card">
+                                <p>Growth / P:E</p>
+                                <h3>{formatRatio(result.metrics.growthOverPe)}</h3>
+                            </article>
+                        )}
+                        {result.metrics.netIncomeLastTwoYears.length === 2 && (
+                            <article className="metric-card wide">
+                                <p>Net Income (Last 2 Years)</p>
+                                <h3>
+                                    {result.metrics.netIncomeLastTwoYears[0].year ?? 'Latest'}: {formatNetIncome(result.metrics.netIncomeLastTwoYears[0].value)} | {result.metrics.netIncomeLastTwoYears[1].year ?? 'Prior'}: {formatNetIncome(result.metrics.netIncomeLastTwoYears[1].value)}
+                                </h3>
+                            </article>
+                        )}
+                        {result.metrics.marketCap !== null && (
+                            <article className="metric-card">
+                                <p>Market Cap</p>
+                                <h3>{result.metrics.marketCap}</h3>
+                            </article>
+                        )}
+                        {result.metrics.fiftyTwoWeekRange !== null && (
+                            <article className="metric-card wide">
+                                <p>52-Week Range</p>
+                                <h3>{result.metrics.fiftyTwoWeekRange}</h3>
+                            </article>
+                        )}
                     </div>
                 </>
             )}

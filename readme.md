@@ -1,73 +1,171 @@
-# React + TypeScript + Vite
+# Stock Analysis Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React + TypeScript web app for researching stock metrics powered by the **Finnhub API**.
 
-Currently, two official plugins are available:
+## 🚀 Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 1. Get an API Key
 
-## React Compiler
+Sign up for free at [finnhub.io](https://finnhub.io) and generate your API token.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. Configure Environment
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env
+# Edit .env and add your Finnhub API key:
+# VITE_FINNHUB_API_KEY=your_token_here
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 3. Install & Run
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+Open <http://localhost:5173> in your browser.
+
+## 📊 Features
+
+Search any stock ticker to see:
+
+- **Real-time Price Data**: Current price, day change percentage
+- **Company Info**: Name, industry classification
+- **Financial Metrics**:
+  - P/E Ratio
+  - 52-week high & low
+  - Market capitalization
+  - Net income (last 2 years with growth rate)
+  - Growth/P/E ratio
+
+## 📁 Project Structure
+
+```
+src/
+├── components/search/        # UI components
+│   ├── TickerApp.tsx        # Main search container
+│   ├── SearchPanel.tsx      # Input form
+│   ├── ResultsPanel.tsx     # Results display
+│   ├── InvalidTickerModal.tsx # Error modal
+│   ├── types.ts             # TypeScript types
+│   └── utils.ts             # Helper functions
+├── API/
+│   └── finnhubService.ts    # Finnhub API client
+└── styles/                   # CSS files
+```
+
+## 🏗️ Building
+
+### Development Build
+
+```bash
+npm run build
+```
+
+### Production Docker Image
+
+```bash
+docker build --build-arg VITE_FINNHUB_API_KEY=your_key . -t stock-app
+docker run -p 80:80 stock-app
+```
+
+The built app is served via nginx at `http://localhost`.
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 19 + TypeScript
+- **Build Tool**: Vite 8
+- **API**: Finnhub Stock Data API
+- **Production**: nginx (Docker)
+- **Dev Dependencies**: ESLint, TypeScript
+
+## 📝 Available Scripts
+
+- `npm run dev` — Start Vite dev server
+- `npm run build` — Build for production
+- `npm run preview` — Preview production build locally
+- `npm run lint` — Run ESLint
+
+## 🔑 Environment Variables
+
+Create a `.env` file in the project root:
+
+```
+VITE_FINNHUB_API_KEY=your_finnhub_token
+```
+
+See `.env.example` for reference.
+
+## 📦 Dependencies
+
+### Production
+
+- `react@^19.2.5`
+- `react-dom@^19.2.5`
+
+### Development
+
+- `vite@^8` — Build tool & dev server
+- `typescript@~6.0.2` — Type checking
+- `eslint@^10` — Code linting
+- `@vitejs/plugin-react@^6` — Vite React integration
+
+## ✨ Key Features
+
+### Smart Error Handling
+
+- Detects rate limits and shows user-friendly messages
+- Validates ticker format before API calls
+- Graceful fallback for missing/invalid data
+
+### Financial Calculations
+
+- **Growth Rate**: Year-over-year net income change
+- **Growth/P/E**: Growth rate divided by P/E ratio (value metric)
+
+### Recent Tickers
+
+- Automatically saves last 5 searched tickers for quick re-access
+
+### Real-time Data
+
+- Direct Finnhub API calls (no backend proxy needed)
+- 60-second cache via Finnhub's native rate limiting
+
+## 🚀 Deployment
+
+### Docker
+
+```bash
+# Build with your API key
+docker build \
+  --build-arg VITE_FINNHUB_API_KEY=your_key \
+  -t stock-analysis-app .
+
+# Run on port 80
+docker run -p 80:80 stock-analysis-app
+```
+
+### Static Hosting (Netlify, Vercel, etc.)
+
+```bash
+npm run build
+# Deploy the 'dist' folder
+```
+
+## 📖 Finnhub API
+
+This app uses four Finnhub endpoints:
+
+- `/stock/profile2` — Company info
+- `/quote` — Price data
+- `/stock/metric` — Financial metrics (P/E, 52-week range)
+- `/stock/financials-reported` — Historical net income
+
+## 🤝 Contributing
+
+Feel free to fork, modify, and improve!
+
+## 📄 License
+
+MIT
