@@ -5,7 +5,7 @@ export function normalizeTicker(value: string): string {
 }
 
 export function isTickerFormatValid(value: string): boolean {
-    return /^[A-Z]{1,5}$/.test(value)
+    return /^[A-Z0-9.\-/]{1,15}$/.test(value)
 }
 
 export function formatPercent(value: number | null): string {

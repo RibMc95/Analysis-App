@@ -6,15 +6,39 @@ type ResultsPanelProps = {
     isLoading: boolean
     isFavorite: boolean
     onToggleFavorite: () => void
+    favorites: string[]
+    onSelectFavorite?: (ticker: string) => void
 }
 
-export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite }: ResultsPanelProps) {
+export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite, favorites, onSelectFavorite }: ResultsPanelProps) {
     return (
         <section className="result-panel">
             {!result && (
                 <div className="empty-state">
-                    <h2>No ticker selected</h2>
-                    <p>Search a ticker to populate this dashboard with company details and key metrics.</p>
+                    {favorites.length > 0 ? (
+                        <>
+                            <h2>Current favorites</h2>
+                            <p>Select a saved ticker or search a new one to populate this dashboard with company details and key metrics.</p>
+                            <div className="favorites-preview-list" aria-label="Current favorites">
+                                {favorites.map((ticker) => (
+                                    <button
+                                        key={ticker}
+                                        type="button"
+                                        className="favorites-preview-chip"
+                                        onClick={() => onSelectFavorite?.(ticker)}
+                                        disabled={!onSelectFavorite}
+                                    >
+                                        {ticker}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h2>No ticker selected</h2>
+                            <p>Search a ticker to populate this dashboard with company details and key metrics.</p>
+                        </>
+                    )}
                 </div>
             )}
 
