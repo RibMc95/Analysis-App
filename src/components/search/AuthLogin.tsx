@@ -1,14 +1,16 @@
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
+import { loginUser } from "../../services/userService";
 
 type AuthUser = {
   email: string;
   userId: string;
+  createdAt?: string;
 } | null;
 
 type AuthContextType = {
   user: AuthUser;
-  login: (email: string, password: string) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -16,23 +18,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser>(() => {
-    const savedUser = localStorage.getItem("stockAppUser");
+    const savedUser = window.localStorage.getItem("stockAppUser");
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = (email: string, _password: string) => {
-    const loggedInUser = {
-      email,
-      userId: email.toLowerCase(),
-    };
+  const login = async (email: string, password: string) => {
+    const loggedInUser = await loginUser(email, password);
 
     setUser(loggedInUser);
-    localStorage.setItem("stockAppUser", JSON.stringify(loggedInUser));
+    window.localStorage.setItem("stockAppUser", JSON.stringify(loggedInUser));
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("stockAppUser");
+    window.localStorage.removeItem("stockAppUser");
   };
 
   return (

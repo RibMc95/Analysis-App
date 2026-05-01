@@ -10,7 +10,7 @@ function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -18,9 +18,14 @@ function LoginPage() {
       return;
     }
 
-    login(email, password);
-    setError("");
-    navigate("/search");
+    try {
+      await login(email, password);
+      setError("");
+      navigate("/search");
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Login failed. Make sure the backend and database are running.");
+    }
   };
 
   return (
@@ -28,13 +33,21 @@ function LoginPage() {
       <header className="hero-panel hero-panel--centered login-hero">
         <p className="eyebrow">Stock Intelligence</p>
         <h2 className="login-hero-title">Login to continue</h2>
-        <p className="login-hero-copy">Enter your credentials and get started with the stock search experience.</p>
+        <p className="login-hero-copy">
+          Enter your credentials and get started with the stock search experience.
+        </p>
       </header>
 
       <main className="login-page-main">
         <section className="login-panel">
           <form onSubmit={handleSubmit}>
-            <label style={{ display: "block", marginBottom: "1rem", fontWeight: 700 }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "1rem",
+                fontWeight: 700,
+              }}
+            >
               Email address
               <input
                 type="email"
@@ -52,7 +65,13 @@ function LoginPage() {
               />
             </label>
 
-            <label style={{ display: "block", marginBottom: "1.5rem", fontWeight: 700 }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "1.5rem",
+                fontWeight: 700,
+              }}
+            >
               Password
               <input
                 type="password"
@@ -71,7 +90,14 @@ function LoginPage() {
             </label>
 
             {error && (
-              <p style={{ color: "var(--down)", marginTop: "0", marginBottom: "1.5rem", fontWeight: 600 }}>
+              <p
+                style={{
+                  color: "var(--down)",
+                  marginTop: "0",
+                  marginBottom: "1.5rem",
+                  fontWeight: 600,
+                }}
+              >
                 {error}
               </p>
             )}
@@ -81,7 +107,14 @@ function LoginPage() {
             </button>
           </form>
 
-          <div style={{ marginTop: "1.5rem", color: "var(--text-muted)", fontSize: "0.9rem", textAlign: "center" }}>
+          <div
+            style={{
+              marginTop: "1.5rem",
+              color: "var(--text-muted)",
+              fontSize: "0.9rem",
+              textAlign: "center",
+            }}
+          >
             <p style={{ margin: "0 0 0.5rem" }}>Need a demo account?</p>
             <p style={{ margin: 0 }}>
               Use <strong>demo@example.com</strong> and any password to continue.
