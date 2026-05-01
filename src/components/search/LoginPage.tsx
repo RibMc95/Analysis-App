@@ -25,14 +25,14 @@ function LoginPage() {
 
   return (
     <div className="page-shell">
-      <header className="hero-panel">
+      <header className="hero-panel hero-panel--centered login-hero">
         <p className="eyebrow">Stock Intelligence</p>
-        <h1>Login to continue</h1>
-        <p>Enter your credentials and get started with the stock search experience.</p>
+        <h2 className="login-hero-title">Login to continue</h2>
+        <p className="login-hero-copy">Enter your credentials and get started with the stock search experience.</p>
       </header>
 
-      <main className="content-grid">
-        <section className="search-panel" style={{ alignSelf: "start", maxWidth: "400px", margin: "0 auto" }}>
+      <main className="login-page-main">
+        <section className="login-panel">
           <form onSubmit={handleSubmit}>
             <label style={{ display: "block", marginBottom: "1rem", fontWeight: 700 }}>
               Email address
@@ -76,20 +76,7 @@ function LoginPage() {
               </p>
             )}
 
-            <button
-              type="submit"
-              style={{
-                width: "100%",
-                padding: "0.85rem 1rem",
-                border: "none",
-                borderRadius: "0.95rem",
-                background: "linear-gradient(135deg, var(--accent), var(--accent-strong))",
-                color: "#ffffff",
-                fontSize: "1rem",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
+            <button type="submit" className="login-submit-button">
               Sign in
             </button>
           </form>

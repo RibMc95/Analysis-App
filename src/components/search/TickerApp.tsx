@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthLogin'
@@ -58,14 +58,6 @@ export function TickerApp() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
-  const headerSubtitle = useMemo(() => {
-    if (!result) {
-      return 'Search any ticker to prepare the valuation and growth dashboard.'
-    }
-
-    return `Ticker ${result.ticker} selected.`
-  }, [result])
-
   function openInvalidModal(message: string, title = 'Invalid ticker'): void {
     setInvalidTitle(title)
     setInvalidMessage(message)
@@ -104,7 +96,7 @@ export function TickerApp() {
     const ticker = normalizeTicker(tickerInput)
 
     if (!isTickerFormatValid(ticker)) {
-      openInvalidModal('Use 1-5 letters only, for example AAPL or MSFT.')
+      openInvalidModal('Use 1-15 characters (letters, numbers, dot, dash, slash), for example AAPL or BRK.B.')
       return
     }
 
@@ -149,41 +141,25 @@ export function TickerApp() {
 
   return (
     <div className="page-shell">
-      <header className="hero-panel">
+      <header className="hero-panel hero-panel--centered">
         <p className="eyebrow">Stock Intelligence</p>
         <p style={{ margin: 0, opacity: 0.9, marginBottom: '0.75rem' }}>
           Welcome back{user?.email ? `, ${user.email}` : ''}.
         </p>
         <h1>Ticker Search</h1>
-        <p>{headerSubtitle}</p>
-        <div style={{ marginTop: '1.25rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <p>Search any ticker to prepare the valuation and growth dashboard.</p>
+        <div style={{ marginTop: '1.25rem', display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => navigate('/favorites')}
-            style={{
-              border: 'none',
-              borderRadius: '0.85rem',
-              padding: '0.85rem 1.2rem',
-              background: 'linear-gradient(135deg, #14b8a6, #0ea5e9)',
-              color: '#ffffff',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
+            className="hero-primary-button"
           >
             Favorites
           </button>
           <button
             type="button"
             onClick={handleLogout}
-            style={{
-              border: '1px solid rgba(255, 255, 255, 0.4)',
-              borderRadius: '0.85rem',
-              padding: '0.85rem 1.2rem',
-              background: 'rgba(255, 255, 255, 0.12)',
-              color: '#f8fafc',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
+            className="hero-secondary-button"
           >
             Logout
           </button>
@@ -199,7 +175,14 @@ export function TickerApp() {
           onSearch={handleSearch}
           onQuickTicker={handleQuickTicker}
         />
-        <ResultsPanel result={result} isLoading={isLoading} isFavorite={isFavorite} onToggleFavorite={toggleFavorite} />
+        <ResultsPanel
+          result={result}
+          isLoading={isLoading}
+          isFavorite={isFavorite}
+          onToggleFavorite={toggleFavorite}
+          favorites={favorites}
+          onSelectFavorite={handleQuickTicker}
+        />
       </main>
 
       <InvalidTickerModal
