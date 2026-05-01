@@ -9,14 +9,29 @@ function getToken(): string {
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
-    const res = await fetch(url)
-    if (res.status === 429) {
-        throw Object.assign(new Error('Rate limit reached. Please wait a moment and try again.'), { status: 429 })
+    const MAX_ATTEMPTS = 3
+
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
+        const res = await fetch(url)
+
+        if (res.status === 429) {
+            if (attempt < MAX_ATTEMPTS - 1) {
+                const delayMs = 1000 * Math.pow(2, attempt)
+                await new Promise((resolve) => setTimeout(resolve, delayMs))
+                continue
+            }
+
+            throw Object.assign(new Error('Rate limit reached. Please wait a moment and try again.'), { status: 429 })
+        }
+
+        if (!res.ok) {
+            throw new Error(`Finnhub request failed with status ${res.status}.`)
+        }
+
+        return res.json() as Promise<T>
     }
-    if (!res.ok) {
-        throw new Error(`Finnhub request failed with status ${res.status}.`)
-    }
-    return res.json() as Promise<T>
+
+    throw new Error('Finnhub request failed after retries.')
 }
 
 type Profile = {
@@ -28,6 +43,11 @@ type Profile = {
 type Quote = {
     c?: number  // current price
     dp?: number // day change %
+}
+
+export type FinnhubQuoteData = {
+    currentPrice: number | null
+    dayChangePercent: number | null
 }
 
 type MetricWrapper = {
@@ -203,6 +223,16 @@ export async function fetchStockData(ticker: string): Promise<FinnhubStockData> 
         netIncomeLastTwoYears,
         netIncomeGrowthRate,
         peOverGrowth,
+    }
+}
+
+export async function fetchStockQuote(ticker: string): Promise<FinnhubQuoteData> {
+    const token = getToken()
+    const quote = await fetchJson<Quote>(`${BASE}/quote?symbol=${ticker}&token=${token}`)
+
+    return {
+        currentPrice: quote.c ?? null,
+        dayChangePercent: quote.dp ?? null,
     }
 }
 

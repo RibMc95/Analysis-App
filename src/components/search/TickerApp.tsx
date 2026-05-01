@@ -7,9 +7,11 @@ import { ResultsPanel } from './ResultsPanel'
 import { SearchPanel } from './SearchPanel'
 import type { SearchResult } from './types'
 import { createPendingResult, formatMarketCap, isTickerFormatValid, normalizeTicker } from './utils'
-import { fetchStockData } from '../../API/finnhubService'
+import { fetchStockData, fetchStockQuote } from '../../API/finnhubService'
 import type { FinnhubStockData } from '../../API/finnhubService'
 import { addFavoriteStock, deleteFavoriteStock, getFavoriteStocks } from '../../services/favoritesService'
+
+const QUOTE_REFRESH_MS = 20_000
 
 function buildFiftyTwoWeekRange(high: number | null | undefined, low: number | null | undefined): string | null {
   if (typeof low === 'number' && typeof high === 'number') {
@@ -56,6 +58,7 @@ export function TickerApp() {
     }
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [isRefreshingQuote, setIsRefreshingQuote] = useState(false)
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
@@ -89,6 +92,53 @@ export function TickerApp() {
       openInvalidModal(message, title)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  async function refreshQuote(ticker: string, showLoading = false): Promise<void> {
+    if (showLoading) {
+      setIsRefreshingQuote(true)
+    }
+
+    try {
+      const quote = await fetchStockQuote(ticker)
+      setResult((current) => {
+        if (!current || current.ticker !== ticker) {
+          return current
+        }
+
+        return {
+          ...current,
+          price: quote.currentPrice,
+          dayChangePercent: quote.dayChangePercent,
+        }
+      })
+    } catch (error) {
+      if (showLoading) {
+        const message = error instanceof Error ? error.message : 'Unable to refresh stock quote.'
+        const isRateLimit =
+          message.toLowerCase().includes('rate limit') ||
+          (error instanceof Object && 'status' in error && (error as { status: number }).status === 429)
+        const title = isRateLimit ? 'Temporarily unavailable' : 'Refresh failed'
+        openInvalidModal(message, title)
+      }
+    } finally {
+      if (showLoading) {
+        setIsRefreshingQuote(false)
+      }
+    }
+  }
+
+  async function handleManualRefresh(): Promise<void> {
+    if (!result) {
+      return
+    }
+
+    setIsRefreshingQuote(true)
+    try {
+      await applyTicker(result.ticker)
+    } finally {
+      setIsRefreshingQuote(false)
     }
   }
 
@@ -179,6 +229,28 @@ export function TickerApp() {
     window.localStorage.setItem('favorites', JSON.stringify(favorites))
   }, [favorites])
 
+  useEffect(() => {
+    if (!result?.ticker) {
+      return
+    }
+
+    const ticker = result.ticker
+
+    const refreshIfVisible = (): void => {
+      if (document.visibilityState === 'visible') {
+        void refreshQuote(ticker)
+      }
+    }
+
+    const intervalId = window.setInterval(refreshIfVisible, QUOTE_REFRESH_MS)
+    document.addEventListener('visibilitychange', refreshIfVisible)
+
+    return () => {
+      window.clearInterval(intervalId)
+      document.removeEventListener('visibilitychange', refreshIfVisible)
+    }
+  }, [result?.ticker])
+
   const isFavorite = result ? favorites.includes(result.ticker) : false
 
   return (
@@ -220,8 +292,10 @@ export function TickerApp() {
         <ResultsPanel
           result={result}
           isLoading={isLoading}
+          isRefreshingQuote={isRefreshingQuote}
           isFavorite={isFavorite}
           onToggleFavorite={toggleFavorite}
+          onRefresh={() => void handleManualRefresh()}
           favorites={favorites}
           onSelectFavorite={handleQuickTicker}
         />

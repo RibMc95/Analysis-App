@@ -6,13 +6,15 @@ import { formatNetIncome, formatPercent, formatPrice, formatRatio } from './util
 type ResultsPanelProps = {
     result: SearchResult | null
     isLoading: boolean
+    isRefreshingQuote?: boolean
     isFavorite: boolean
     onToggleFavorite: () => void
+    onRefresh?: () => void
     favorites: string[]
     onSelectFavorite?: (ticker: string) => void
 }
 
-export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite, favorites, onSelectFavorite }: ResultsPanelProps) {
+export function ResultsPanel({ result, isLoading, isRefreshingQuote = false, isFavorite, onToggleFavorite, onRefresh, favorites, onSelectFavorite }: ResultsPanelProps) {
     return (
         <section className="result-panel">
             {!result && (
@@ -53,6 +55,17 @@ export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite, 
                             <p>{result.industry ?? (isLoading ? 'Loading industry...' : 'Industry unavailable')}</p>
                         </div>
                         <div className="price-block">
+                            {onRefresh && (
+                                <button
+                                    type="button"
+                                    className="favorite-button"
+                                    onClick={onRefresh}
+                                    disabled={isLoading || isRefreshingQuote}
+                                    aria-label="Refresh stock data"
+                                >
+                                    {isRefreshingQuote ? 'Refreshing...' : 'Refresh'}
+                                </button>
+                            )}
                             <button
                                 type="button"
                                 className={isFavorite ? 'favorite-button active' : 'favorite-button'}
