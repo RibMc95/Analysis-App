@@ -1,0 +1,60 @@
+import { DynamoDBClient, CreateTableCommand, DescribeTableCommand } from "@aws-sdk/client-dynamodb";
+
+const client = new DynamoDBClient({
+  region: process.env.AWS_REGION || "us-east-1",
+  endpoint: process.env.DYNAMODB_ENDPOINT || "http://localhost:8000",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "fakeMyKeyId",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "fakeSecretAccessKey",
+  },
+});
+
+async function tableExists(tableName) {
+  try {
+    await client.send(new DescribeTableCommand({ TableName: tableName }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function createTables() {
+  // Users table
+  if (await tableExists("Users")) {
+    console.log("Table 'Users' already exists, skipping.");
+  } else {
+    await client.send(new CreateTableCommand({
+      TableName: "Users",
+      AttributeDefinitions: [{ AttributeName: "userId", AttributeType: "S" }],
+      KeySchema: [{ AttributeName: "userId", KeyType: "HASH" }],
+      BillingMode: "PAY_PER_REQUEST",
+    }));
+    console.log("Created table: Users");
+  }
+
+  // FavoriteStocks table
+  if (await tableExists("FavoriteStocks")) {
+    console.log("Table 'FavoriteStocks' already exists, skipping.");
+  } else {
+    await client.send(new CreateTableCommand({
+      TableName: "FavoriteStocks",
+      AttributeDefinitions: [
+        { AttributeName: "userId", AttributeType: "S" },
+        { AttributeName: "ticker", AttributeType: "S" },
+      ],
+      KeySchema: [
+        { AttributeName: "userId", KeyType: "HASH" },
+        { AttributeName: "ticker", KeyType: "RANGE" },
+      ],
+      BillingMode: "PAY_PER_REQUEST",
+    }));
+    console.log("Created table: FavoriteStocks");
+  }
+
+  console.log("Done.");
+}
+
+createTables().catch((err) => {
+  console.error("Seed failed:", err);
+  process.exit(1);
+});

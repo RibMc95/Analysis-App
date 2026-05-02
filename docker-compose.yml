@@ -1,0 +1,52 @@
+services:
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: stock-dynamodb
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb"
+
+  dynamo-admin:
+    image: aaronshaf/dynamodb-admin
+    container_name: stock-dynamo-admin
+    ports:
+      - "8001:8001"
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb:8000
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: fakeMyKeyId
+      AWS_SECRET_ACCESS_KEY: fakeSecretAccessKey
+    depends_on:
+      - dynamodb
+
+  backend:
+    image: node:24
+    container_name: stock-backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: fakeMyKeyId
+      AWS_SECRET_ACCESS_KEY: fakeSecretAccessKey
+      DYNAMODB_ENDPOINT: http://dynamodb:8000
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      - dynamodb
+
+  frontend:
+    image: node:24
+    container_name: stock-frontend
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - backend

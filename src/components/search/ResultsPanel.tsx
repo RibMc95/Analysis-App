@@ -1,20 +1,48 @@
+
 import type { SearchResult } from './types'
 import { formatNetIncome, formatPercent, formatPrice, formatRatio } from './utils'
+
 
 type ResultsPanelProps = {
     result: SearchResult | null
     isLoading: boolean
+    isRefreshingQuote?: boolean
     isFavorite: boolean
     onToggleFavorite: () => void
+    onRefresh?: () => void
+    favorites: string[]
+    onSelectFavorite?: (ticker: string) => void
 }
 
-export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite }: ResultsPanelProps) {
+export function ResultsPanel({ result, isLoading, isRefreshingQuote = false, isFavorite, onToggleFavorite, onRefresh, favorites, onSelectFavorite }: ResultsPanelProps) {
     return (
         <section className="result-panel">
             {!result && (
                 <div className="empty-state">
-                    <h2>No ticker selected</h2>
-                    <p>Search a ticker to populate this dashboard with company details and key metrics.</p>
+                    {favorites.length > 0 ? (
+                        <>
+                            <h2>Current favorites</h2>
+                            <p>Select a saved ticker or search a new one to populate this dashboard with company details and key metrics.</p>
+                            <div className="favorites-preview-list" aria-label="Current favorites">
+                                {favorites.map((ticker) => (
+                                    <button
+                                        key={ticker}
+                                        type="button"
+                                        className="favorites-preview-chip"
+                                        onClick={() => onSelectFavorite?.(ticker)}
+                                        disabled={!onSelectFavorite}
+                                    >
+                                        {ticker}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h2>No ticker selected</h2>
+                            <p>Search a ticker to populate this dashboard with company details and key metrics.</p>
+                        </>
+                    )}
                 </div>
             )}
 
@@ -27,6 +55,17 @@ export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite }
                             <p>{result.industry ?? (isLoading ? 'Loading industry...' : 'Industry unavailable')}</p>
                         </div>
                         <div className="price-block">
+                            {onRefresh && (
+                                <button
+                                    type="button"
+                                    className="favorite-button"
+                                    onClick={onRefresh}
+                                    disabled={isLoading || isRefreshingQuote}
+                                    aria-label="Refresh stock data"
+                                >
+                                    {isRefreshingQuote ? 'Refreshing...' : 'Refresh'}
+                                </button>
+                            )}
                             <button
                                 type="button"
                                 className={isFavorite ? 'favorite-button active' : 'favorite-button'}
@@ -63,10 +102,10 @@ export function ResultsPanel({ result, isLoading, isFavorite, onToggleFavorite }
                                 <h3>{formatPercent(result.metrics.netIncomeGrowth)}</h3>
                             </article>
                         )}
-                        {result.metrics.growthOverPe !== null && (
+                        {result.metrics.peOverGrowth !== null && (
                             <article className="metric-card">
-                                <p>Growth / P:E</p>
-                                <h3>{formatRatio(result.metrics.growthOverPe)}</h3>
+                                <p>P/E / Growth</p>
+                                <h3>{formatRatio(result.metrics.peOverGrowth)}</h3>
                             </article>
                         )}
                         {result.metrics.netIncomeLastTwoYears.length === 2 && (
